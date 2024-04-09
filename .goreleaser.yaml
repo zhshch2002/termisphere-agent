@@ -1,0 +1,16 @@
+version: 1
+
+project_name: tea
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: tea/main.go
+    goos: [ linux ]
+    goarch: [ amd64, arm64 ]
+
+archives:
+  - format: binary
+    name_template: '{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}'
