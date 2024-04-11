@@ -72,14 +72,14 @@ func Network(d time.Duration) ([]NetworkReport, error) {
 	for idx := range res {
 		if rx, err := os.ReadFile("/sys/class/net/" + res[idx].Name + "/statistics/rx_bytes"); err == nil {
 			if value, err := strconv.ParseUint(strings.TrimSpace(string(rx)), 10, 64); err == nil {
-				res[idx].RXSpeed = value - res[idx].RX
+				res[idx].RXSpeed = (value - res[idx].RX) / uint64(d.Seconds())
 				res[idx].RX = value
 			}
 		}
 
 		if stat, err := os.ReadFile("/sys/class/net/" + res[idx].Name + "/statistics/tx_bytes"); err == nil {
 			if value, err := strconv.ParseUint(strings.TrimSpace(string(stat)), 10, 64); err == nil {
-				res[idx].TXSpeed = value - res[idx].TX
+				res[idx].TXSpeed = (value - res[idx].TX) / uint64(d.Seconds())
 				res[idx].TX = value
 			}
 		}
