@@ -91,7 +91,7 @@ func main() {
 			&cli.BoolFlag{Name: "hostname", Usage: "report hostname info"},
 			&cli.BoolFlag{Name: "cpu", Usage: "report cpu info"},
 			&cli.BoolFlag{Name: "memory", Usage: "report memory info"},
-			&cli.BoolFlag{Name: "disk", Usage: "report disk info"},
+			&cli.BoolFlag{Name: "block-device", Usage: "report block device info"},
 			&cli.BoolFlag{Name: "filesystem", Usage: "report filesystem info"},
 			&cli.BoolFlag{Name: "network", Usage: "report network info"},
 			&cli.BoolFlag{Name: "all", Usage: "report all info"},
@@ -102,10 +102,9 @@ func main() {
 			hostname := c.Bool("hostname")
 			cpu := c.Bool("cpu")
 			memory := c.Bool("memory")
-			disk := c.Bool("disk")
+			blockDevice := c.Bool("block-device")
 			filesystem := c.Bool("filesystem")
 			network := c.Bool("network")
-
 			all := c.Bool("all")
 
 			a := c.Args().First()
@@ -117,25 +116,28 @@ func main() {
 				return err
 			}
 
-			res, err := report.Fetch(d, report.Request{
-				Arch:       all || arch,
-				Platform:   all || platform,
-				Hostname:   all || hostname,
-				CPU:        all || cpu,
-				Memory:     all || memory,
-				Disk:       all || disk,
-				Filesystem: all || filesystem,
-				Network:    all || network,
-			})
-			if err != nil {
-				return err
+			if res, err := report.Fetch(d, report.Request{
+				Arch:        all || arch,
+				Platform:    all || platform,
+				Hostname:    all || hostname,
+				CPU:         all || cpu,
+				Memory:      all || memory,
+				BlockDevice: all || blockDevice,
+				Filesystem:  all || filesystem,
+				Network:     all || network,
+			}); err == nil {
+				b, err := json.MarshalIndent(res, "", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Println(string(b))
+			} else {
+				b, err := json.MarshalIndent(map[string]any{"error": err.Error()}, "", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Println(string(b))
 			}
-
-			b, err := json.MarshalIndent(res, "", "  ")
-			if err != nil {
-				return err
-			}
-			fmt.Println(string(b))
 
 			return nil
 		},

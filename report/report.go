@@ -44,11 +44,11 @@ func Fetch(d time.Duration, req Request) (res Report, err error) {
 		}
 	}
 
-	if req.Disk {
+	if req.BlockDevice {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			res.Disk, err = Disk(d)
+			res.BlockDevice, err = BlockDevice(d)
 		}()
 	}
 
@@ -67,8 +67,7 @@ func Fetch(d time.Duration, req Request) (res Report, err error) {
 		}()
 	}
 
-	wg.Wait()
-	if err != nil {
+	if wg.Wait(); err != nil {
 		return Report{}, err
 	}
 
@@ -76,25 +75,25 @@ func Fetch(d time.Duration, req Request) (res Report, err error) {
 }
 
 type Request struct {
-	Arch       bool
-	Platform   bool
-	Hostname   bool
-	CPU        bool
-	Memory     bool
-	Disk       bool
-	Filesystem bool
-	Network    bool
+	Arch        bool
+	Platform    bool
+	Hostname    bool
+	CPU         bool
+	Memory      bool
+	BlockDevice bool
+	Filesystem  bool
+	Network     bool
 }
 
 type Report struct {
-	Arch       string             `json:"arch,omitempty"`
-	Platform   string             `json:"platform,omitempty"`
-	Hostname   string             `json:"hostname,omitempty"`
-	CPU        []CpuReport        `json:"cpu,omitempty"`
-	Memory     *MemoryReport      `json:"memory,omitempty"`
-	Disk       []DiskReport       `json:"disk,omitempty"`
-	Filesystem []FilesystemReport `json:"filesystem,omitempty"`
-	Network    []NetworkReport    `json:"network,omitempty"`
+	Arch        string              `json:"arch,omitempty"`
+	Platform    string              `json:"platform,omitempty"`
+	Hostname    string              `json:"hostname,omitempty"`
+	CPU         []CpuReport         `json:"cpu,omitempty"`
+	Memory      *MemoryReport       `json:"memory,omitempty"`
+	BlockDevice []BlockDeviceReport `json:"block_device,omitempty"`
+	Filesystem  []FilesystemReport  `json:"filesystem,omitempty"`
+	Network     []NetworkReport     `json:"network,omitempty"`
 }
 
 type CpuReport struct {
@@ -119,7 +118,7 @@ type MemoryReport struct {
 	SwapCache uint64 `json:"swap_cache"`
 }
 
-type DiskReport struct {
+type BlockDeviceReport struct {
 	Name       string `json:"name"`
 	Model      string `json:"model"`
 	Vendor     string `json:"vendor"`
