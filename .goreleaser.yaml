@@ -8,7 +8,7 @@ before:
 
 builds:
   - main: tea/main.go
-    goos: [ linux ]
+    goos: [ linux, darwin, freebsd, windows ]
     goarch: [ amd64, arm64 ]
 
 archives:

@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"termisphere-agent/utils"
 	"time"
 )
 
@@ -14,7 +15,7 @@ func Network(d time.Duration) ([]NetworkReport, error) {
 		return nil, err
 	}
 
-	lst := SlicesMap(ls, func(i os.DirEntry) string {
+	lst := utils.SlicesMap(ls, func(i os.DirEntry) string {
 		return i.Name()
 	})
 
