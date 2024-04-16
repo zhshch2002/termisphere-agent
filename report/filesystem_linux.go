@@ -19,10 +19,6 @@ func Filesystem() ([]FilesystemReport, error) {
 			continue
 		}
 
-		if !strings.HasPrefix(fields[0], "/") {
-			continue
-		}
-
 		var fs FilesystemReport
 		fs.Mount = fields[1]
 		fs.Device = fields[0]

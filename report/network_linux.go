@@ -21,10 +21,6 @@ func Network(d time.Duration) ([]NetworkReport, error) {
 
 	var res []NetworkReport
 	for _, dev := range lst {
-		if dev == "lo" {
-			continue
-		}
-
 		var network NetworkReport
 		network.Name = dev
 		network.IP = make([]string, 0)
